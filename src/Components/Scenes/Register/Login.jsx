@@ -34,7 +34,7 @@ function Login() {
     const isMatchedPhone = useMediaQuery(theme.breakpoints.down('sm'))
     return (
         <Box sx={{ height: '103vh', background: 'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(20,66,114,1) 100%, rgba(20,38,114,1) 100%)' }}>
-            <Header />
+            <Header  isloging={true}/>
             <Box p={isMatchedPhone ? '50px 10px' : '30px'} display='flex' justifyContent='center' alignItems='center'>
                 <Box display='flex' flexDirection='column' justifyContent='space-between' sx={{ width: isMatchedTablette ? '80%' : isMatchedPhone ? '100%' : '35%' }}>
                     <img src={logologin} alt="login" width='28%' style={{ margin: '0 auto', marginBottom: '40px' }} />

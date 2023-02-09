@@ -9,6 +9,11 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import wave from '../../Assets/waveSignup.svg'
 import { useState } from 'react'
 function Signup() {
+    const [chosen, setChosen] = useState(() => {
+        const savedChosen = localStorage.getItem('choose')
+        return JSON.parse(savedChosen) || ''
+    })
+
     const SignupSchema = Yup.object().shape({
         Name: Yup.string()
             .min(2, 'Name is too short')
@@ -31,12 +36,37 @@ function Signup() {
             .matches(/[0-9]/, 'Password must contain at least one number')
             .required('Password is required'),
     });
-    const initialValues = {
+    const SignupSchemaCompany = Yup.object().shape({
+        Name: Yup.string()
+            .min(2, 'Name is too short')
+            .max(50, 'Name is too long')
+            .required('Name is required'),
+        City: Yup.string()
+            .min(3, 'Place is too short')
+            .max(50, 'Place is too long')
+            .required('Place is required'),
+        Email: Yup.string()
+            .email('Invalid email')
+            .required('Email is required'),
+        Password: Yup.string()
+            .min(8, 'Password must be at least 8 characters long')
+            .matches(/[a-zA-Z]/, 'Password must contain at least one letter')
+            .matches(/[0-9]/, 'Password must contain at least one number')
+            .required('Password is required'),
+    });
+    const initialValuesEmployer = {
         Name: '',
         FamilyName: '',
         UserName: '',
         Email: '',
         PhoneNumber: '',
+        Password: ''
+    }
+    const initialValuesCompany = {
+        Name: '',
+        City: '',
+        Description: '',
+        Email: '',
         Password: ''
     }
     const theme = useTheme()
@@ -46,18 +76,18 @@ function Signup() {
     const isMatchedLaptop = useMediaQuery(theme.breakpoints.down('lg'))
     return (
         <Box sx={{ background: 'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(20,66,114,1) 100%, rgba(20,38,114,1) 100%)' }}>
-            <Header />
+            <Header isloging={false} />
             <Box p={isMatchedTablette ? '40px 30px' : '40px 60px'} display='flex' flexDirection={isMatchedTablette ? 'column' : 'row'}>
-                <Box flex={1}>
+                <Box flex={chosen == 'chosenCompany' ? 1.2 : 1}>
                     <Typography variant={isMatchedPhone ? 'h5' : 'h4'} color='secondary' mb={4} width={isMatchedTablette ? '100%' : '70%'}>
-                        Inscrivez-vous  en 2 minutes seulement !
+                        {chosen == 'chosenCompany' ? 'Sign up for your projet !' : 'Sign up for your job !'}
                     </Typography>
                     <Formik
-                        initialValues={initialValues}
-                        validationSchema={SignupSchema}
+                        initialValues={chosen == 'chosenCompany' ? initialValuesCompany : initialValuesEmployer}
+                        validationSchema={chosen == 'chosenCompany' ? SignupSchemaCompany : SignupSchema}
                         onSubmit={(values, actions) => {
                             setTimeout(() => {
-                                alert(JSON.stringify(values, null, 2));
+                                alert(JSON.stringify(values));
                                 actions.setSubmitting(false);
                             }, 1000);
                         }}
@@ -66,7 +96,7 @@ function Signup() {
                             <Form style={{ display: 'flex', flexDirection: 'column' }}>
                                 <TextField
                                     name="Name"
-                                    label="Name"
+                                    label={chosen == 'chosenCompany' ? 'Name of company' : 'Name'}
                                     type="text"
                                     variant="filled"
                                     value={values.Name}
@@ -78,31 +108,34 @@ function Signup() {
                                     sx={{ mb: '20px', width: isMatchedTablette ? '100%' : '75%' }}
                                 />
                                 <TextField
-                                    name="FamilyName"
-                                    label="FamilyName"
+                                    name={chosen == 'chosenCompany' ? 'City' : 'FamilyName'}
+                                    label={chosen == 'chosenCompany' ? 'Place of the company' : 'FamilyName'}
                                     type="text"
                                     variant="filled"
-                                    value={values.FamilyName}
+                                    value={chosen == 'chosenCompany' ? values.City : values.FamilyName}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    helperText={<ErrorMessage name="FamilyName" />}
-                                    error={touched.FamilyName && errors.FamilyName}
+                                    helperText={<ErrorMessage name={chosen == 'chosenCompany' ? 'City' : "FamilyName"} />}
+                                    error={chosen == 'chosenCompany' ? (touched.City && errors.City) : (touched.FamilyName && errors.FamilyName)}
                                     disabled={isSubmitting}
                                     sx={{ mb: '20px', width: isMatchedTablette ? '100%' : '75%' }}
                                 />
-                                <TextField
-                                    name="UserName"
-                                    label="UserName"
-                                    type="text"
-                                    variant="filled"
-                                    value={values.UserName}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                    helperText={<ErrorMessage name="UserName" />}
-                                    error={touched.UserName && errors.UserName}
-                                    disabled={isSubmitting}
-                                    sx={{ mb: '20px', width: isMatchedTablette ? '100%' : '75%' }}
-                                />
+                                {
+                                    chosen != 'chosenCompany' &&
+                                    <TextField
+                                        name="UserName"
+                                        label="UserName"
+                                        type="text"
+                                        variant="filled"
+                                        value={values.UserName}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        helperText={<ErrorMessage name="UserName" />}
+                                        error={touched.UserName && errors.UserName}
+                                        disabled={isSubmitting}
+                                        sx={{ mb: '20px', width: isMatchedTablette ? '100%' : '75%' }}
+                                    />
+                                }
                                 <TextField
                                     name="Email"
                                     label="Email"
@@ -120,7 +153,7 @@ function Signup() {
                                     name="Password"
                                     label="Password"
                                     variant="filled"
-                                    type={visibilityPassword ?'password':'text'}
+                                    type={visibilityPassword ? 'password' : 'text'}
                                     value={values.Password}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -131,14 +164,29 @@ function Signup() {
                                         endAdornment: (
                                             <InputAdornment position='end'>
                                                 {
-                                                    visibilityPassword ? <VisibilityOffOutlinedIcon onClick={()=>setVisibilityPassword(false)} sx={{ color: 'black', cursor: 'pointer' }} />
-                                                        : <VisibilityOutlinedIcon onClick={()=>setVisibilityPassword(true)} sx={{ color: 'black', cursor: 'pointer' }} />
+                                                    visibilityPassword ? <VisibilityOffOutlinedIcon onClick={() => setVisibilityPassword(false)} sx={{ color: 'black', cursor: 'pointer' }} />
+                                                        : <VisibilityOutlinedIcon onClick={() => setVisibilityPassword(true)} sx={{ color: 'black', cursor: 'pointer' }} />
                                                 }
                                             </InputAdornment>
                                         )
                                     }}
                                     sx={{ mb: '20px', width: isMatchedTablette ? '100%' : '75%' }}
                                 />
+                                {
+                                    chosen == 'chosenCompany' &&
+                                    <TextField
+                                        name='Description'
+                                        label='Short description of your company (not required)'
+                                        type="text"
+                                        variant="filled"
+                                        multiline={true}
+                                        rows={4}
+                                        value={values.Description}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                        sx={{ mb: '20px', width: isMatchedTablette ? '100%' : '75%' }}
+                                    />
+                                }
                                 <Button type="submit" variant='contained' color='primary' disabled={isSubmitting} sx={{ mb: '20px', width: '150px', borderRadius: '60px' }}>
                                     Next
                                 </Button>
@@ -146,8 +194,9 @@ function Signup() {
                         )}
                     </Formik>
                 </Box>
-                <Box flex={1} display='flex' alignItems='center' justifyContent='center'>
+                <Box flex={chosen == 'chosenCompany' ? 0.8 : 1} display='flex' alignItems='center' justifyContent='center'>
                     <img src={signup} alt="signup" width='85%' />
+                    
                 </Box>
             </Box>
         </Box >
