@@ -7,8 +7,17 @@ import Login from './Components/Scenes/Register/Login';
 import Jobs from './Components/Scenes/Jobs/Jobs';
 import './Components/Global/Sketlon/Sketlon.css'
 import ChooseSignUp from './Components/Scenes/Register/ChooseSignUp';
-import SignupCompany from './Components/Scenes/Register/SignupCompany';
-function App() {
+import Profile from './Components/Scenes/Profile/Profile';
+ function App() {
+  const getCookie=(name)=> {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    if (parts.length === 2) {
+      return parts.pop().split(";").shift();
+    }
+  }
+  const token = getCookie("token");
+  const UserInfos=JSON.parse(localStorage.getItem('UserInfo'))
   const theme = createTheme({
     components: {
       MuiCssBaseline: {
@@ -35,6 +44,7 @@ function App() {
       },
     },
   });
+  
   return (
     <div className="App">
     <ThemeProvider theme={theme}>  
@@ -44,8 +54,10 @@ function App() {
           <Route path='/chooseToBe' element={<ChooseSignUp/>} />
           <Route path='/signup' element={<Signup/>}/>
            <Route path='/login' element={<Login/>}/>
-          <Route path='/Jobs' element={<Jobs/>}/>
-         </Routes>
+          <Route path='/Jobs' element={<Jobs token={token} UserInfos={UserInfos}/>}/>
+          <Route path='/profile/:username' element={<Profile/>}/>
+          <Route path='/profile' element={<Profile/>}/>
+          </Routes>
       </BrowserRouter>
       </ThemeProvider>
        

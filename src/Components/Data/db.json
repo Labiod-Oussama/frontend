@@ -2,13 +2,14 @@
   "Companies": [
     {
       "id": 1,
-      "name": "rendili",
-      "city": "oran",
-      "postion": "junior web developer",
-      "typeOfJob": "remote",
-      "image": "https://i.pinimg.com/564x/eb/84/79/eb84790b9533fe8136d639ee0dc85563.jpg",
-      "description": "the company is looking for a junior web developer the company is looking for a junior web developer the company is looking for a junior web developer the company is looking for a junior web developer the company is looking for a junior web developer",
-      "tasks": "build a new web site",
+      "name": "Algerie Telecoms",
+      "city": "Oran",
+      "postion": "Networking Engineer",
+      "typeOfJob": "Onsite",
+      "image": "https://i.pinimg.com/564x/10/d9/0f/10d90fd0577da69a6c8962f776813834.jpg",
+      "description": "We are looking for a certified junior networking engineer, to be part of our team in the ACTEL of IBN ROCHD, Oran.",
+       "time":2,
+      "tasks": "configuring and installin networking devices, performing maintenance and updates.",
       "qualification": [
         "css",
         "html",
@@ -19,13 +20,14 @@
       "maxSalary": 5000
     },
     {
-      "name": "akrili",
-      "city": "alger",
-      "postion": "flutter developer",
-      "typeOfJob": "full-time",
+      "name": "IT9an",
+      "city": "Algeries",
+      "postion": "Flutter Developer",
+      "typeOfJob": "Hybrid",
       "image": "https://i.pinimg.com/564x/cf/e9/d8/cfe9d800a85e146f7aeb93f579a8ab1b.jpg",
-      "description": "the company is looking for a flutter developer the company is looking for a flutter developer the company is looking for a flutter developer the company is looking for a flutter developer the company is looking for a flutter developer the company is looking for a flutter developer",
-      "tasks": "build an application for our project",
+      "description": "We are looking for a professional Flutter developer",
+      "time":5,
+      "tasks": "Build a mobile app for our business ",
       "qualification": [
         "dart",
         "php",
@@ -36,12 +38,13 @@
       "maxSalary": 3000
     },
     {
-      "name": "Sonatrack",
+      "name": "Sonatrach",
       "city": "Tebessa",
-      "postion": "Ingenieur in electric",
-      "typeOfJob": "full-time",
+      "postion": "Electrical Engineer",
+      "typeOfJob": "Onsite",
       "image": "https://i.pinimg.com/564x/a8/3b/5d/a83b5ddfc044104f35356c1a843e6d36.jpg",
       "description": " the company is looking for an ingenieur in electric the company is looking for an ingenieur in electric the company is looking for an ingenieur in electric",
+      "time":7,
       "tasks": "build a lot of things",
       "qualification": [
         "certificat in electric",
@@ -58,6 +61,7 @@
       "typeOfJob": "remote",
       "image": "https://i.pinimg.com/564x/a8/a9/7e/a8a97e58035d5e49bb5c107754e0107d.jpg",
       "description": " the company is looking for a junior web developer",
+      "time":3,
       "tasks": "build a new web site",
       "qualification": [
         "nodejs",

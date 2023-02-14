@@ -30,9 +30,26 @@ function Home() {
   useEffect(() => {
     AOS.init({ duration: 1200 })
   }, [])
+  const getCookie=(name)=> {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    if (parts.length === 2) {
+      return parts.pop().split(";").shift();
+    }
+  }
+  const token = getCookie("token");
+  const UserInfos=JSON.parse(localStorage.getItem('UserInfo'))
+  
+  // useEffect(()=>{
+  //     fetch('http://192.168.140.79',{
+  //       method:'POST',
+  //       headers:{'Content-Type': 'application/json'},
+
+  //     })
+  // },[])
   return (
     <Box overflow='hidden'>
-      <Header isloging={false} />
+      <Header isloging={false} profile={token?true:false} userInfo={UserInfos}/>
       <Box display='flex'>
         <Box flex={1.2} sx={{ m: isMatchedTablette ? '50px 30px' : '100px 30px' }}>
           <Typography variant={isMatchedPhone ? 'h4' : 'h2'} color='secondary' sx={{ fontWeight: 'bolder', mb: 5 }} gutterBottom>

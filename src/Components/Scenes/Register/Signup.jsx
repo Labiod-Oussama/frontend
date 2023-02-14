@@ -1,13 +1,19 @@
 import { Box, Button, InputAdornment, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ErrorMessage, Field, Form, Formik, formik } from 'formik'
 import * as Yup from 'yup'
 import Header from '../../Global/Header'
 import signup from '../../Assets/signup.png'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
+import GoogleLogin from "react-google-login";
 import wave from '../../Assets/waveSignup.svg'
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookOutlinedIcon from '@mui/icons-material/FacebookOutlined';
 import { useState } from 'react'
+import { textAlign } from '@mui/system'
+import axios from 'axios'
 function Signup() {
     const [chosen, setChosen] = useState(() => {
         const savedChosen = localStorage.getItem('choose')
@@ -74,6 +80,30 @@ function Signup() {
     const isMatchedTablette = useMediaQuery(theme.breakpoints.down('md'))
     const isMatchedPhone = useMediaQuery(theme.breakpoints.down('sm'))
     const isMatchedLaptop = useMediaQuery(theme.breakpoints.down('lg'))
+    const [email, setEmail] = useState(null);
+    const responseFacebook = async (response) => {
+        console.log(response);
+        localStorage.setItem('token', JSON.stringify(response.accessToken))
+        // const respons = await fetch(`https://graph.facebook.com/${response.userID}?fields=id,name,email,picture&access_token=${response.accessToken}`);
+        // const data = await respons.json();
+        // setEmail(data);
+        // console.log(data);  
+    };
+    // const [email, setEmail] = useState('');
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //   };
+    //   fetchData();
+    // }, []);
+    const responseGoogle = (response) => {
+        console.log(response);
+    };
+    
+    // fetch('http://192.168.163.79:3000/signup',{
+    //     method:'POST',
+    //     headers:{'Content-Type':'application/json'},
+    //     body:JSON.stringify({username:'ssds',password:'sdsda'})
+    // })
     return (
         <Box sx={{ background: 'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(20,66,114,1) 100%, rgba(20,38,114,1) 100%)' }}>
             <Header isloging={false} />
@@ -86,10 +116,14 @@ function Signup() {
                         initialValues={chosen == 'chosenCompany' ? initialValuesCompany : initialValuesEmployer}
                         validationSchema={chosen == 'chosenCompany' ? SignupSchemaCompany : SignupSchema}
                         onSubmit={(values, actions) => {
-                            setTimeout(() => {
-                                alert(JSON.stringify(values));
-                                actions.setSubmitting(false);
-                            }, 1000);
+                            actions.setSubmitting(false);
+                            fetch('http://192.168.245.79:3000/signup', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ username: values.Name, password: values.Password,email:values.Email })
+                            }).then(res=>res.json()).
+                            then(data=>console.log(data))
+                            .catch(er=>console.log(er))
                         }}
                     >
                         {({ values, handleChange, handleBlur, touched, errors, isSubmitting }) => (
@@ -187,16 +221,62 @@ function Signup() {
                                         sx={{ mb: '20px', width: isMatchedTablette ? '100%' : '75%' }}
                                     />
                                 }
-                                <Button type="submit" variant='contained' color='primary' disabled={isSubmitting} sx={{ mb: '20px', width: '150px', borderRadius: '60px' }}>
-                                    Next
+                                <Button type="submit" variant='contained' color='primary' disabled={isSubmitting} sx={{ margin: isMatchedTablette ? '0 auto' : '0', mb: '20px', width: '150px', borderRadius: '60px' }}>
+                                    Sign up
                                 </Button>
                             </Form>
                         )}
                     </Formik>
                 </Box>
                 <Box flex={chosen == 'chosenCompany' ? 0.8 : 1} display='flex' alignItems='center' justifyContent='center'>
-                    <img src={signup} alt="signup" width='85%' />
-                    
+                    {
+                        chosen != 'chosenCompany' ? <Box width={isMatchedTablette ? '100%' : '70%'} textAlign='center' >
+                            <Box display='flex' alignItems='center' mb={3}>
+                                <hr style={{ height: 0, borderColor: 'rgb(81, 80, 80)', flex: 1 }} />
+                                <Typography variant='h6' color='whitesmoke' m='0 5px' display='inline-block' textAlign='center'>OR</Typography>
+                                <hr style={{ flex: 1, height: 0, borderColor: 'rgb(81, 80, 80)' }} />
+                            </Box>
+
+                            <FacebookLogin
+                                appId="946093673468705" // Replace with your Facebook App ID
+                                callback={responseFacebook}
+                                render={(renderProps) => (
+                                    <Button
+                                        startIcon={<FacebookOutlinedIcon />}
+                                        variant='contained'
+                                        sx={{ width: isMatchedPhone ? '100%' : (isMatchedTablette ? '70%' : '100%'), mb: 2, borderRadius: '60px' }}
+                                        onClick={renderProps.onClick}>
+                                        Login with Facebook
+                                    </Button>
+                                )}
+                            />
+                            <GoogleLogin
+                                clientId="378672419142-63so1bfi4dhfob95e00anj40s9t74jn3.apps.googleusercontent.com"
+                                buttonText='login with google'
+                                // render={(renderProps) => (
+                                //     <Button
+                                //         startIcon={<GoogleIcon sx={{ color: 'rgb(214, 15, 15)' }} />}
+                                //         onClick={renderProps.onClick}
+                                //         disabled={renderProps.disabled}
+                                //         style={{
+                                //             backgroundColor: "white",
+                                //             color: 'rgb(214, 15, 15)',
+                                //             width: isMatchedPhone ? '100%' : (isMatchedTablette ? '70%' : '100%'),
+                                //             borderRadius: '60px'
+                                //         }}
+                                //     >
+                                //         Login with Google
+                                //     </Button>
+                                // )}
+                                onSuccess={responseGoogle}
+                                onFailure={responseGoogle}
+                                cookiePolicy={"single_host_origin"}
+
+                            />
+                        </Box>
+                            : <img src={signup} alt="signup" width='85%' />
+                    }
+
                 </Box>
             </Box>
         </Box >
