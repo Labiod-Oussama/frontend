@@ -1,29 +1,30 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AppBar, Box, Button, Tabs, Toolbar, Typography, useTheme } from '@mui/material'
-import logo from '../Assets/rendili_logo.jpg'
+import { AppBar, Box, Button, Toolbar, Typography, useTheme } from '@mui/material'
+import logo from '../Assets/rendili_logo.svg'
 import user from '../Assets/user.jpg'
-function Header({ isloging, profile, userInfo }) {
+function Header({ isloging, profile, UserInfos,updateContext }) {
   const theme = useTheme()
   const navigate = useNavigate()
-   const [chosen, setChosen] = useState(() => {
+  const [chosen, setChosen] = useState(() => {
     const savedChosen = localStorage.getItem('choose')
     return JSON.parse(savedChosen) || ''
   })
   const handleLogOut = () => {
+    updateContext({});
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     localStorage.removeItem('UserInfo')
     navigate('/login')
   }
   return (
-    <AppBar sx={{ bgcolor: "whitesmoke", height: '70px', position: 'relative', mb: 2 }}>
+    <AppBar sx={{ bgcolor: "whitesmoke", height: '70px', position: 'relative', mb: 2,zIndex:1 }}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }} >
-        <img src={logo} alt="logo_rendili" width='60px' onClick={() => navigate('/')} />
+        <img src={logo} alt="logo_rendili" width='40px' onClick={() => navigate('/')} />
         {
           profile && <>
             <div style={{ flex: '1' }}></div>
-            <Typography variant='body1' color='primary' mr={2} fontWeight='bold'>{userInfo[0].username}</Typography>
-            <img src={user} alt='profile_name' width='50px' style={{ borderRadius: '10px',cursor:'pointer' }} onClick={()=>profile ?navigate(`/profile`):navigate('/login')} />
+            <Typography variant='body1' color='primary' mr={2} fontWeight='bold'>{UserInfos.username}</Typography>
+            <img src={user} alt='profile_name' width='50px' style={{ borderRadius: '10px', cursor: 'pointer' }} onClick={() => profile ? navigate(`/profile`) : navigate('/login')} />
             <Button variant='contained' color='primary' sx={{ ml: 1 }} onClick={handleLogOut}>
               Log out
             </Button>

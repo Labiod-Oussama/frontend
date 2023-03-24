@@ -1,5 +1,5 @@
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, InputAdornment, TextField, useMediaQuery, useTheme } from '@mui/material'
-import React from 'react'
+import React, { useContext } from 'react'
 import axios from 'axios'
 import { useSearchParams } from "react-router-dom";
 import Header from '../../Global/Header'
@@ -10,7 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import JobsFiltering from './JobsFiltering';
 import { useEffect } from 'react';
-function Jobs({token,UserInfos}) {
+import { InfoGlobal } from '../../../App';
+function Jobs({updateContext}) {
+    const Infos=useContext(InfoGlobal)
     const [searchParams] = useSearchParams();
     const theme = useTheme()
     const navigate = useNavigate()
@@ -22,29 +24,20 @@ function Jobs({token,UserInfos}) {
     const [searchPlace, setSearchPlace] = useState('')
     const [TypeOfJob, setTypeOfJob] = useState('')
     const [checked, setChecked] = useState([]);
-    const [order,setorder]=useState('')
-    useEffect(()=>{
-          console.log(Array.from(checked))
-          console.log(searchParams.get('typeOfJob'));
-          
-    },[searchParams.get('typeOfJob')])
+    const [order, setorder] = useState('')
+    // useEffect(() => {
+    //     console.log(Array.from(checked))
+    //     console.log(searchParams.get('typeOfJob'));
+
+    // }, [searchParams.get('typeOfJob')])
     const [Jobs, setJobs] = useState(null)
-    const sort=(e)=>{
+    const sort = (e) => {
         setorder(e)
     }
-    // const getCookie=(name)=> {
-    //     const value = "; " + document.cookie;
-    //     const parts = value.split("; " + name + "=");
-    //     if (parts.length === 2) {
-    //       return parts.pop().split(";").shift();
-    //     }
-    //   }
-    //   const token = getCookie("token");
-    //   const UserInfos=JSON.parse(localStorage.getItem('UserInfo'))
     return (
         <Box>
-            <Header isloging={false}  profile={token?true:false} userInfo={UserInfos}/>
-            <Box p={isMatchedPhone?'10px': isMatchedTablette?'30px':'50px'}>
+            <Header isloging={false} profile={Infos.token ? true : false} UserInfos={Infos.UserInfos} updateContext={updateContext}/>
+            <Box p={isMatchedPhone ? '10px' : isMatchedTablette ? '30px' : '50px'}>
                 <Box display='flex' flexWrap='wrap' mb={3} >
                     <TextField
                         label="Enter job title or keyword"
@@ -65,7 +58,7 @@ function Jobs({token,UserInfos}) {
                         variant='outlined'
                         color='primary'
                         onChange={(e) => setSearchPlace(e.target.value)}
-                        sx={{ mr: 2,mb:1, width: isMatchedPhone ? '65%' : '30%' }}
+                        sx={{ mr: 2, mb: 1, width: isMatchedPhone ? '65%' : '30%' }}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
@@ -74,7 +67,7 @@ function Jobs({token,UserInfos}) {
                             )
                         }}
                     />
-                    <Button variant='contained' size='medium' onClick={() => { navigate(`/Jobs?${searchJob && `keywords=${searchJob}&`}${searchPlace && `cityLoc=${searchPlace}&`}${Array.from(checked).length!=0 && `typeOfJob=${Array.from(checked).join(',')}&`}${order && `Sort=${order}`}`) }} sx={{ height: '55px', fontSize: '1.1em', bgcolor: 'primary.main', borderRadius: isMatchedTablette ? '50%' : '60px', fontWeight: 'bold' }}>
+                    <Button variant='contained' size='medium' onClick={() => { navigate(`/Jobs?${searchJob && `keywords=${searchJob}&`}${searchPlace && `cityLoc=${searchPlace}&`}${Array.from(checked).length != 0 && `typeOfJob=${Array.from(checked).join(',')}&`}${order && `Sort=${order}`}`) }} sx={{ height: '55px', fontSize: '1.1em', bgcolor: 'primary.A200','&:hover':{bgcolor:'primary.A100'},color:'primary.main', borderRadius: isMatchedTablette ? '50%' : '60px', fontWeight: 'bold' }}>
                         {
                             isMatchedTablette ? <ArrowForwardOutlinedIcon sx={{ textAlign: 'center' }} /> : 'Search'
                         }
@@ -82,15 +75,16 @@ function Jobs({token,UserInfos}) {
                     <FormGroup sx={{ display: "flex", flexWrap: 'wrap', flexDirection: 'row', mb: 5 }}>
                         {
                             TimeCheckbox.map((ele, index) => (
-                                <FormControlLabel key={index} control={<Checkbox onChange={(e)=>(e.target.checked ? setChecked(new Set([...checked,ele])):setChecked([...checked].filter(elem=>elem!=ele)))}/>} label={ele} sx={{ mr: 5 }}></FormControlLabel>
+                                <FormControlLabel key={index} control={<Checkbox onChange={(e) => (e.target.checked ? setChecked(new Set([...checked, ele])) : setChecked([...checked].filter(elem => elem != ele)))} />} label={ele} sx={{ mr: 5 }}></FormControlLabel>
                             ))
                         }
                     </FormGroup>
-                    
+
                 </Box>
                 {
-                    <JobsFiltering keywords={searchParams.get('keywords') || ''} cityLoc={searchParams.get('cityLoc') || ''} typeOfJob={searchParams.get('typeOfJob')||''}  />
+                    <JobsFiltering keywords={searchParams.get('keywords') || ''} cityLoc={searchParams.get('cityLoc') || ''} typeOfJob={searchParams.get('typeOfJob') || ''} />
                 }
+
 
             </Box>
         </Box>

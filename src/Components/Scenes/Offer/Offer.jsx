@@ -1,0 +1,151 @@
+import { Box, Button, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import CloseIcon from '@mui/icons-material/Close';
+import { serverAddress } from '../../Global/Config';
+import './style.css'
+function Offer({ offering, correctSubmit, errorSubmit }) {
+  const [offer, setOffer] = useState({})
+  const [next, setNext] = useState(1)
+  const [nextCorrect, setNextCorrect] = useState(true)
+  const theme = useTheme()
+  const isMatchedTablette = useMediaQuery(theme.breakpoints.down('md'))
+  const isMatchedPhone = useMediaQuery(theme.breakpoints.down('sm'))
+  const getCookie = (name) => {
+    const value = "; " + document.cookie;
+    const parts = value.split("; " + name + "=");
+    if (parts.length === 2) {
+      return parts.pop().split(";").shift();
+    }
+  }
+  const token = getCookie("token");
+  useEffect(() => {
+    if (Object.keys(offer).length == 5) {
+      if (offer.position.trim() != '' && offer.city.trim() && offer.typeOfJob.trim() && offer.salaryMin.trim() && offer.salaryMax.trim()) {
+        setNextCorrect(false)
+      }
+      else {
+        setNextCorrect(true)
+      }
+    }
+  }, [offer])
+  const handleSubmit = () => {
+    fetch(`${serverAddress}/Jobs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(offer)
+    }).then(offering(false))
+      .then(correctSubmit(true))
+      .catch(()=>errorSubmit(true))
+  }
+  return (
+    <Box sx={{ position: 'fixed', width: '100%', height: '100vh', bgcolor: 'rgba(0, 0, 0,0.65)', top: 0 }}>
+      <Box sx={{ position: 'absolute', width: isMatchedPhone ? '80%' : isMatchedTablette ? '70%' : '50%', p: '10px 20px 20px', bgcolor: 'whitesmoke', top: '55%', left: '50%', transform: 'translate(-50%,-50%)', borderRadius: '10px' }}>
+        <CloseIcon onClick={() => offering(false)} sx={{ display: 'block', marginLeft: 'auto', cursor: 'pointer' }} />
+        <Typography variant={isMatchedPhone ? 'h6' : isMatchedTablette ? 'h5' : 'h4'} color='primary' sx={{ fontWeight: 'bold', textAlign: 'center', mb: 4, letterSpacing: '3px' }}>FILL YOUR OFFER</Typography>
+        <form style={{ display: 'flex', flexDirection: isMatchedPhone ? 'column' : 'row', justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: '20px' }}>
+          {
+            next == 1 && <>
+              <TextField
+                label='position'
+                variant='filled'
+                color='primary'
+                value={offer.position}
+                sx={{ width: isMatchedPhone ? '100%' : '45%', mb: isMatchedPhone ? 2 : 4 }}
+                onChange={(e) => setOffer({ ...offer, position: e.target.value })}
+              />
+              <TextField
+                label='city'
+                variant='filled'
+                color='primary'
+                value={offer.city}
+                sx={{ width: isMatchedPhone ? '100%' : '45%', mb: isMatchedPhone ? 2 : 4 }}
+                onChange={(e) => setOffer({ ...offer, city: e.target.value })}
+              />
+              <TextField
+                label='type of job'
+                variant='filled'
+                color='primary'
+                value={offer.typeOfJob}
+                sx={{ width: isMatchedPhone ? '100%' : '45%', mb: isMatchedPhone ? 2 : 0 }}
+                onChange={(e) => setOffer({ ...offer, typeOfJob: e.target.value })}
+              />
+              <Box display='flex' alignItems='center' width={isMatchedPhone ? '100%' : '45%'}>
+                <TextField
+                  label='min-salay'
+                  type='number'
+                  variant='outlined'
+                  color='primary'
+                  value={offer.min < 0 ? 0 : offer.min}
+                  sx={{ mr: 1 }}
+                  onChange={(e) => setOffer({ ...offer, salaryMin: `${e.target.value}` })}
+                />
+                to
+                <TextField
+                  label='max-salay'
+                  type='number'
+                  variant='outlined'
+                  color='primary'
+                  value={offer.max < 0 ? 0 : offer.max}
+                  sx={{ ml: 1 }}
+                  onChange={(e) => setOffer({ ...offer, salaryMax: `${e.target.value}` })}
+                />
+              </Box>
+            </>
+          }
+          {
+            next == 2 &&
+            <>
+              <TextField
+                label='Description'
+                variant='filled'
+                color='primary'
+                multiline={true}
+                rows={4}
+                value={offer.description}
+                sx={{ width: isMatchedPhone ? '100%' : '45%', mb: isMatchedPhone ? 2 : 0 }}
+                onChange={(e) => setOffer({ ...offer, description: e.target.value })}
+              />
+              <TextField
+                label='skills'
+                variant='filled'
+                color='primary'
+                multiline={true}
+                rows={4}
+                value={offer.skills}
+                sx={{ width: isMatchedPhone ? '100%' : '45%' }}
+                onChange={(e) => setOffer({ ...offer, skills: e.target.value })}
+              />
+
+            </>
+          }
+        </form>
+        {
+          next == 1 &&
+          <Button variant='contained' color='primary' disabled={nextCorrect} sx={{ display: 'block', marginLeft: 'auto', fontWeight: 'bold', letterSpacing: '3px' }}
+            onClick={() => setNext(prev => prev + 1)}
+          >
+            Next
+          </Button>
+        }
+        {
+          next == 2 && <Box display='flex' justifyContent='space-between'>
+            <Button variant='contained' color='primary' sx={{ fontWeight: 'bold', letterSpacing: '3px' }}
+              onClick={() => setNext(prev => prev - 1)}
+            >
+
+              back
+            </Button>
+            <Button variant='contained' color='primary' sx={{ fontWeight: 'bold', letterSpacing: '3px' }}
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>
+          </Box>
+        }
+      </Box>
+    </Box>
+  )
+  //  position skills tasks  sallary remote  city  site desc
+}
+
+export default Offer

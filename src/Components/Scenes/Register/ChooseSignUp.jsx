@@ -3,7 +3,7 @@ import { border, boxSizing } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import cx from 'classnames'
-import logo from '../../Assets/rendili_logo.jpg'
+import logo from '../../Assets/rendili_logo.svg'
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import EngineeringOutlinedIcon from '@mui/icons-material/EngineeringOutlined';
 function ChooseSignUp() {
@@ -33,7 +33,7 @@ function ChooseSignUp() {
         <Box>
             <AppBar position='static'>
                 <Toolbar sx={{ bgcolor: 'white' }} >
-                    <img src={logo} alt="logo_rendili" width='60px' onClick={() => navigate('/')} />
+                    <img src={logo} alt="logo_rendili" width='40px' onClick={() => navigate('/')} />
                 </Toolbar>
             </AppBar>
             <Box p={isMatchedPhone?'50px 5px 0 5px':(isMatchedTablette?'60px 30px 0 30px':'70px  100px 0 100px')}>

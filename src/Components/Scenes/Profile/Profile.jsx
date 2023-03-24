@@ -1,51 +1,49 @@
-import React, { useState, useEffect } from 'react'
-import { Box, Button, Typography } from '@mui/material'
+import React, { useState, useEffect, useContext } from 'react'
+import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import SideBar from './SideBar'
 import TopBar from './TopBar'
-import couverture from '../../Assets/couverture.png'
-import user from '../../Assets/user.jpg'
-import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
-import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
-import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
+
+import SavedJobs from '../Jobs/SavedJobs'
+import You from './You'
+import { InfoGlobal } from '../../../App'
+import JobsCreated from '../Jobs/JobsCreated'
+import ProfileEdit from './ProfileEdit'
 function Profile() {
+    const Infos=useContext(InfoGlobal)
+    const theme = useTheme()
+    const isMatchedTablette = useMediaQuery(theme.breakpoints.down('md'))
+    const isMatchedPhone = useMediaQuery(theme.breakpoints.down('sm'))
+    const isMatchedLaptop = useMediaQuery(theme.breakpoints.down('lg'))
     const navigate = useNavigate()
     useEffect(() => {
-        navigate(`/profile/${JSON.parse(localStorage.getItem('UserInfo'))[0].username}`)
+        navigate(`/profile/${Infos.UserInfos.username}`)
     }, [navigate])
-
+    const [chosenItem, setChosenItem] = useState('You')
+    const [edit,setEdit]=useState(false)
+    const handleEditProfile=(e)=>{
+        setEdit(e)
+    }
+    const handleItem = (e) => {
+        setChosenItem(e)
+    }
     return (
         <Box>
             <TopBar />
-            <Box display='flex'>
-                <SideBar />
-                <Box p='20px 50px' flex={1}>
-                    <Box display='flex' flexDirection='column' position='relative'>
-                        <img src={couverture} alt='couverture' width='100%' height='300px' style={{ borderRadius: '10px 10px 0 0 ' }} />
-                        <img src={user} alt='profile_name' style={{ position: 'absolute', width: '150px', borderRadius: '30px', left: '30px', top: '200px' }} />
-                        <Box display='flex' >
-                            <Box p='60px'>
-                                <Typography variant='h4' color='secondary'  >{JSON.parse(localStorage.getItem('UserInfo'))[0].username}</Typography>
-                            </Box>
-                            <Box display='flex' flex={1} justifyContent='space-between' alignItems='flex-start' mt={2} >
-                                <Box display='flex'>
-                                    <LocationOnOutlinedIcon />
-                                    <Typography variant='body1' color='secondary' ml={2}>Oran</Typography>
-                                </Box>
-                                <Box>
-                                    <Button variant='outlined' color='primary' startIcon={<CreateOutlinedIcon />} sx={{ mr: 2 }}>
-                                        Edit
-                                    </Button>
-                                    <Button variant='outlined' color='primary' startIcon={<IosShareOutlinedIcon />}>
-                                        Share
-                                    </Button>
-                                </Box>
-                            </Box>
-
-                        </Box>
-                    </Box>
-                    
-                </Box>
+            <Box display='flex' position='relative'>
+                {!isMatchedPhone && <SideBar handleItem={handleItem} selected={chosenItem}/>}
+                {
+                    chosenItem == 'You' && <You handleEditProfile={handleEditProfile}/>
+                }
+                {
+                    chosenItem == 'Saved' && <SavedJobs />
+                }
+                {
+                    chosenItem=='JobsCreated' && <JobsCreated/> 
+                }
+                {
+                    edit && <ProfileEdit handleEditProfile={handleEditProfile} />
+                }
             </Box>
         </Box>
     )

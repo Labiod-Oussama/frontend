@@ -1,5 +1,5 @@
 import { Box, Button, InputAdornment, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { ErrorMessage, Field, Form, Formik, formik } from 'formik'
 import * as Yup from 'yup'
 import Header from '../../Global/Header'
@@ -12,9 +12,12 @@ import wave from '../../Assets/waveSignup.svg'
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookOutlinedIcon from '@mui/icons-material/FacebookOutlined';
 import { useState } from 'react'
-import { textAlign } from '@mui/system'
 import axios from 'axios'
-function Signup() {
+import { useNavigate } from 'react-router-dom'
+import { InfoGlobal } from '../../../App'
+import { serverAddress } from '../../Global/Config'
+function Signup({ updateContext }) {
+    const Infos = useContext(InfoGlobal)
     const [chosen, setChosen] = useState(() => {
         const savedChosen = localStorage.getItem('choose')
         return JSON.parse(savedChosen) || ''
@@ -81,6 +84,7 @@ function Signup() {
     const isMatchedPhone = useMediaQuery(theme.breakpoints.down('sm'))
     const isMatchedLaptop = useMediaQuery(theme.breakpoints.down('lg'))
     const [email, setEmail] = useState(null);
+    const navigate = useNavigate()
     const responseFacebook = async (response) => {
         console.log(response);
         localStorage.setItem('token', JSON.stringify(response.accessToken))
@@ -98,14 +102,9 @@ function Signup() {
     const responseGoogle = (response) => {
         console.log(response);
     };
-    
-    // fetch('http://192.168.163.79:3000/signup',{
-    //     method:'POST',
-    //     headers:{'Content-Type':'application/json'},
-    //     body:JSON.stringify({username:'ssds',password:'sdsda'})
-    // })
+
     return (
-        <Box sx={{ background: 'linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(20,66,114,1) 100%, rgba(20,38,114,1) 100%)' }}>
+        <Box >
             <Header isloging={false} />
             <Box p={isMatchedTablette ? '40px 30px' : '40px 60px'} display='flex' flexDirection={isMatchedTablette ? 'column' : 'row'}>
                 <Box flex={chosen == 'chosenCompany' ? 1.2 : 1}>
@@ -117,13 +116,18 @@ function Signup() {
                         validationSchema={chosen == 'chosenCompany' ? SignupSchemaCompany : SignupSchema}
                         onSubmit={(values, actions) => {
                             actions.setSubmitting(false);
-                            fetch('http://192.168.245.79:3000/signup', {
+                            fetch(`${serverAddress}/signup`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ username: values.Name, password: values.Password,email:values.Email })
-                            }).then(res=>res.json()).
-                            then(data=>console.log(data))
-                            .catch(er=>console.log(er))
+                                body: JSON.stringify({
+                                    username: values.Name,
+                                    password: values.Password,
+                                    email: values.Email,
+                                    companyCondition: chosen == 'chosenCompany' ? true : false
+                                })
+                            }).then(res => res.json())
+                                .then(data => data.success && (navigate('/'), document.cookie = `token=${data.token}; expires=Tue, 19 Jan 2038 03:14:07 UTC; path=/`, localStorage.setItem('UserInfo', JSON.stringify(data.user)),updateContext({token:data.token,UserInfos:JSON.parse(localStorage.getItem('UserInfo'))})))
+                                .catch(er => console.log(er))
                         }}
                     >
                         {({ values, handleChange, handleBlur, touched, errors, isSubmitting }) => (
@@ -274,7 +278,7 @@ function Signup() {
 
                             />
                         </Box>
-                            : <img src={signup} alt="signup" width='85%' />
+                            : <img src={signup} alt="signup" width='100%' />
                     }
 
                 </Box>

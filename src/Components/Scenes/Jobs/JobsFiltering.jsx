@@ -1,11 +1,14 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { Box, Button, FormControl, InputLabel, MenuItem, Pagination, Select, Stack, Typography, useMediaQuery, useTheme } from '@mui/material'
 import React from 'react'
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useEffect, useState,useContext } from 'react'
 import SketlonElement from '../../Global/Sketlon/SketlonElement'
+import {InfoGlobal} from "../../../App";
+import { serverAddress } from '../../Global/Config'
 import OneJob from './OneJob'
 function JobsFiltering({ keywords, cityLoc, typeOfJob }) {
-  const [Jobs, setJobs] = useState(null)
+  const Infos=useContext(InfoGlobal)
+  const [Jobs, setJobs] = useState([])
   const [sort, setSort] = useState('')
   const theme = useTheme()
   const [loading, setLoading] = useState(true)
@@ -40,7 +43,7 @@ function JobsFiltering({ keywords, cityLoc, typeOfJob }) {
   // const same=keywords
   useEffect(() => {
     const sendingData = async () => {
-      await axios.post('http://192.168.245.79:3000/search', {
+      await axios.post(`${serverAddress}/search`, {
         key: keywords,
         city: cityLoc,
         typeOfJob,
@@ -70,8 +73,8 @@ function JobsFiltering({ keywords, cityLoc, typeOfJob }) {
   const OrderBy = ['By Default', 'recent first']
 
   return (
-    <Box>
-      <Box display='flex' flexDirection='column' >
+    <Box >
+      <Box display='flex' flexDirection='column' mb={3}>
         {
           loading && [1, 2, 3, 4, 5].map(n => (
             <SketlonElement key={n} />
@@ -108,11 +111,15 @@ function JobsFiltering({ keywords, cityLoc, typeOfJob }) {
 
           </>
         }
-
-
-
-
       </Box>
+      {
+        Jobs.length != 0 && <Box display='flex' justifyContent='center'>
+          <Stack>
+            <Pagination count={10} shape='rounded' variant='text' color='primary'></Pagination>
+          </Stack>
+        </Box>
+      }
+
     </Box>
   )
 }

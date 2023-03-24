@@ -3,9 +3,10 @@ import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlin
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import React, { useContext, useEffect, useState } from 'react'
 import Login from '../Register/Login';
-import { tokenContext } from '../../../App';
-
+import { InfoGlobal, tokenContext } from '../../../App';
+import { serverAddress } from '../../Global/Config';
 function OneJob({ id, image, position, place, name, remote, description, time }) {
+  const Infos=useContext(InfoGlobal)
   const theme = useTheme()
   const isMatchedTablette = useMediaQuery(theme.breakpoints.down('md'))
   const isMatchedPhone = useMediaQuery(theme.breakpoints.down('sm'))
@@ -14,36 +15,50 @@ function OneJob({ id, image, position, place, name, remote, description, time })
       backgroundColor: ' #e5ebee'
     }
   }
+ 
   // calcul the time of company
   const dayRightNow = new Date();
   const dayCompanyCreated = new Date(time);
   const diff = dayRightNow.getTime() - dayCompanyCreated.getTime();
   const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+  // getting token
+  // const getCookie = (name) => {
+  //   const value = "; " + document.cookie;
+  //   const parts = value.split("; " + name + "=");
+  //   if (parts.length === 2) {
+  //     return parts.pop().split(";").shift();
+  //   }
+  // }
+  // const token = getCookie("token");
   // handle the save job
   const handleSave = () => {
     const userInfos = JSON.parse(localStorage.getItem('UserInfo'));
-    if (userInfos[0].companies.some(e => e == id) == false) {
-      userInfos[0].companies.push(id)
-      setSaved(userInfos[0].companies)
+     if (userInfos.savedJob.some(e => e == id) == false) {
+      userInfos.savedJob.push(id)
+      console.log(userInfos.savedJob);
+      fetch(`${serverAddress}/saved`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${Infos.token}` },
+        body: JSON.stringify({
+          savedJob: userInfos.savedJob
+        })
+      }).then(localStorage.setItem('UserInfo', JSON.stringify(userInfos)), setSaved(userInfos.savedJob))
     }
-    else{
-      const index=userInfos[0].companies.indexOf(id);
-      userInfos[0].companies.splice(index,1)
-      setSaved(userInfos[0].companies.splice(index,1))
-    }
-    fetch(`http://192.168.245.79:3000/save/${JSON.parse(localStorage.getItem('UserInfo'))[0]._id}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        companies: id
-      })
-    }).then(res => res.json())
-      .then(data => data.success && localStorage.setItem('UserInfo', JSON.stringify(userInfos)))
-  }
-  const [saved,setSaved]=useState(JSON.parse(localStorage.getItem('UserInfo'))[0].companies)
-  useEffect(()=>{
+    else {
+      const index = userInfos.savedJob.indexOf(id);
+      userInfos.savedJob.splice(index, 1)
+      fetch(`${serverAddress}/saved`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${Infos.token}` },
+        body: JSON.stringify({
+          savedJob: userInfos.savedJob
+        })
+      }).then(localStorage.setItem('UserInfo', JSON.stringify(userInfos)), setSaved(userInfos.savedJob))
 
-  },[])
+    }
+
+  }
+  const [saved, setSaved] = useState(JSON.parse(localStorage.getItem('UserInfo'))?.savedJob??[])
   return (
     <Box p={isMatchedPhone ? '5px' : '10px 30px 30px 20px'} display='flex' style={{ borderRadius: '15px', cursor: 'pointer' }} sx={BoxSx}>
       <img src={image} alt={name} width={isMatchedPhone ? '90px' : '120px'} height={isMatchedPhone ? '80px' : '100px'} style={{ margin: isMatchedPhone ? '13px 20px 0 0' : '15px 20px 0 0', borderRadius: '10px', border: "solid 2px grey" }} />
@@ -59,11 +74,12 @@ function OneJob({ id, image, position, place, name, remote, description, time })
       </Box>
       <Box display='flex' flexDirection='column' height={isMatchedPhone ? '110px' : '120px'} justifyContent='space-evenly' alignItems='flex-end'>
         <Typography variant={isMatchedPhone ? 'body2' : 'body1'} color='secondary.grey' >
-          {diffInDays == 0 ? 'Today' : `${diffInDays} days ago`}
+          {/* {diffInDays == 0 ? 'Today' : `${diffInDays} days ago`} */}
+          2 days ago
         </Typography>
         {
-          isMatchedTablette ? saved.some(e=>e==id)?<BookmarkIcon color='primary'/>:<BookmarkBorderOutlinedIcon onClick={handleSave} color='primary' /> : <Button variant='outlined' color='primary' onClick={handleSave} sx={{ fontWeight: 'bolder' }} startIcon={saved.some(e=>e==id)?<BookmarkIcon color='primary'/> :<BookmarkBorderOutlinedIcon />}>
-            {saved.some(e=>e==id)?'SAVED' :'SAVE JOB'}
+          isMatchedTablette ? saved.some(e => e == id) ? <BookmarkIcon color='primary' /> : <BookmarkBorderOutlinedIcon onClick={handleSave} color='primary' /> : <Button variant='outlined' color='primary' onClick={handleSave} sx={{ fontWeight: 'bolder' }} startIcon={saved.some(e => e == id) ? <BookmarkIcon color='primary' /> : <BookmarkBorderOutlinedIcon />}>
+            {saved.some(e => e == id) ? 'SAVED' : 'SAVE JOB'}
           </Button>
         }
 

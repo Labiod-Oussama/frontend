@@ -1,18 +1,21 @@
 import { Box, Button, Checkbox, FormControlLabel, FormGroup, InputAdornment, Link, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Header from '../../Global/Header'
 import logologin from '../../Assets/login.png'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-function Login() {
+import { InfoGlobal } from '../../../App';
+import { serverAddress } from '../../Global/Config';
+function Login({ updateContext }) {
+    const Infos = useContext(InfoGlobal)
     const [userName, setUserName] = useState('')
     const [password, setPassword] = useState('')
     const [errorUserName, setErrorUserName] = useState(false)
     const [errorPassword, setErrorPassword] = useState(false)
     const [visibilityPassword, setVisibilityPassword] = useState(true)
-    const navigate=useNavigate()
+    const navigate = useNavigate()
     useEffect(() => {
         if (userName) {
             setErrorUserName(false)
@@ -29,7 +32,7 @@ function Login() {
         if (!password) {
             setErrorPassword(true)
         }
-        fetch('http://192.168.245.79:3000/login', {
+        fetch(`${serverAddress}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -37,8 +40,8 @@ function Login() {
                 password: password
             })
         }).then(res => res.json()).
-        // then(data=>console.log(data))
-            then(data => data.success && (navigate('/'),document.cookie=`token=${data.token}; expires=Tue, 19 Jan 2038 03:14:07 UTC; path=/`,localStorage.setItem('UserInfo',JSON.stringify(data.user))))
+            // then(data=>console.log(data))
+            then(data => data.success && (navigate('/'), document.cookie = `token=${data.token}; expires=Tue, 19 Jan 2038 03:14:07 UTC; path=/`, localStorage.setItem('UserInfo', JSON.stringify(data.user)),updateContext({token:data.token,UserInfos:JSON.parse(localStorage.getItem('UserInfo'))})))
             .catch(error => console.log(error))
     }
     const theme = useTheme()
