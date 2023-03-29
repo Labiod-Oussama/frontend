@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AppBar, Avatar, Box, Button, InputAdornment, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { AppBar, Avatar, Badge, Box, Button, InputAdornment, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material'
 import logo from '../../Assets/rendili_logo.svg'
 import user from '../../Assets/user.jpg'
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -49,12 +49,15 @@ function TopBar() {
                         )
                     }}
                 />
-                <Box display='flex' alignItems='center'>
-                    {
+                <Box display='flex' alignItems='center' color='primary.main'>
+                    <Badge color="primary" badgeContent={0} showZero sx={{mr:3,cursor:'pointer'}}>
+                        <NotificationsIcon />
+                    </Badge>
+                    {/* {
                         isMatchedPhone ? <NotificationsIcon sx={{ color: 'black', mr: 2 }} /> : <Button variant='outlined' color='secondary' sx={{ marginRight: '20px', borderRadius: '20px' }} startIcon={<NotificationsIcon />}>
                             Notifications
                         </Button>
-                    }
+                    } */}
 
                     {/* <Button variant='text' color='primary' onClick={() => setDownProfile(prev => !prev)} sx={{ position: 'relative', borderRadius: '18px' }} endIcon={!downProfile ? <KeyboardArrowDownIcon sx={{ transform: 'scale(1.3)' }} /> : <KeyboardArrowUpIcon sx={{ transform: 'scale(1.3)' }} />}>
                         <img src={user} alt="profile_name" width='50px' style={{ borderRadius: '18px' }} />

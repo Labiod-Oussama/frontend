@@ -17,7 +17,7 @@ function SideBar({handleItem,selected}) {
     const isMatchedPhone = useMediaQuery(theme.breakpoints.down('sm'))
     const isMatchedLaptop = useMediaQuery(theme.breakpoints.down('lg'))
     return (
-        <Box  p={isMatchedTablette?'4px 10px':'10px 30px'} borderRight='solid 1.5px grey'>  
+        <Box p={isMatchedTablette?'4px 10px':'10px 30px'} borderRight='solid 1.5px grey'>  
             <Box display='flex' flexDirection={isMatchedTablette?'column':'row'} alignItems='center' mb={5} >
                 <img src={user} alt="profile_name" width={isMatchedTablette?'55px':'70px'} style={{ marginRight:isMatchedTablette?'0px':'15px',marginBottom:isMatchedTablette?'10px':'0px', borderRadius: '18px' }} />
                 <Typography variant='h6' color='primary' fontWeight='bold'>

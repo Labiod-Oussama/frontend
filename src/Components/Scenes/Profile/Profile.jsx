@@ -9,6 +9,7 @@ import You from './You'
 import { InfoGlobal } from '../../../App'
 import JobsCreated from '../Jobs/JobsCreated'
 import ProfileEdit from './ProfileEdit'
+import PostComponent from './PostComponent'
 function Profile() {
     const Infos=useContext(InfoGlobal)
     const theme = useTheme()
@@ -21,11 +22,15 @@ function Profile() {
     }, [navigate])
     const [chosenItem, setChosenItem] = useState('You')
     const [edit,setEdit]=useState(false)
+    const [post,setPost]=useState(false)
     const handleEditProfile=(e)=>{
         setEdit(e)
     }
     const handleItem = (e) => {
         setChosenItem(e)
+    }
+    const handlePost=(e)=>{
+        setPost(e)
     }
     return (
         <Box>
@@ -33,7 +38,7 @@ function Profile() {
             <Box display='flex' position='relative'>
                 {!isMatchedPhone && <SideBar handleItem={handleItem} selected={chosenItem}/>}
                 {
-                    chosenItem == 'You' && <You handleEditProfile={handleEditProfile}/>
+                    chosenItem == 'You' && <You handleEditProfile={handleEditProfile} handlePost={handlePost}/>
                 }
                 {
                     chosenItem == 'Saved' && <SavedJobs />
@@ -43,6 +48,9 @@ function Profile() {
                 }
                 {
                     edit && <ProfileEdit handleEditProfile={handleEditProfile} />
+                }
+                {
+                    post && <PostComponent handlePost={handlePost}/>
                 }
             </Box>
         </Box>

@@ -47,6 +47,7 @@ function App() {
       secondary: {
         main: '#1D2124',
         grey: '#5E737D',
+        A100:'rgb(236, 233, 233)'
       },
     },
   });

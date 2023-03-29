@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close';
 import { serverAddress } from '../../Global/Config';
 import './style.css'
-function Offer({ offering, correctSubmit, errorSubmit }) {
+function Offer({ offering, handleClick }) {
   const [offer, setOffer] = useState({})
   const [next, setNext] = useState(1)
   const [nextCorrect, setNextCorrect] = useState(true)
@@ -33,9 +33,13 @@ function Offer({ offering, correctSubmit, errorSubmit }) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify(offer)
-    }).then(offering(false))
-      .then(correctSubmit(true))
-      .catch(()=>errorSubmit(true))
+    }).then((res) => res.json())
+      .then((data) => data.success && (offering(false), setTimeout(() => {
+        handleClick(true)
+      }, 600)))
+      .catch((err) => offering(false), setTimeout(() => {
+        handleClick(false)
+      }, 600))
   }
   return (
     <Box sx={{ position: 'fixed', width: '100%', height: '100vh', bgcolor: 'rgba(0, 0, 0,0.65)', top: 0 }}>

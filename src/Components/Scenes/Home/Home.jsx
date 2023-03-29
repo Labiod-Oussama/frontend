@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { Alert, Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, Grow, InputAdornment, InputLabel, MenuItem, Select, Snackbar, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AOS from 'aos'
@@ -17,6 +17,8 @@ import Header from '../../Global/Header'
 import Footer from '../../Global/Footer'
 import Offer from '../Offer/Offer'
 import { InfoGlobal } from '../../../App'
+import MuiAlert from '@mui/material/Alert';
+
 function Home({ handleOffer, updateContext }) {
   const { token, UserInfos } = useContext(InfoGlobal)
   const theme = useTheme()
@@ -37,30 +39,69 @@ function Home({ handleOffer, updateContext }) {
   useEffect(() => {
     AOS.init({ duration: 1200 })
   }, [])
+  // Search keywords
+  const [SearchKeys, setSearchKeys] = useState(() => {
+    const words = localStorage.getItem('SearchKeywords');
+    return JSON.parse(words) || []
+  })
+
+
   const offering = (e) => {
     setMakeOffer(e)
     handleOffer(e)
     // setMakeCorrectSubmit(false)
   }
-  const correctSubmit = (e) => {
-    setMakeCorrectSubmit(e)
-  }
-  const errorSubmit = (e) => {
-    setMakeErrorSubmit(e)
-  }
-  useEffect(() => {
-    if (makeCorrectSubmit) {
-      setTimeout(() => {
-        setMakeCorrectSubmit(false)
-      }, 2500);
-    }
-    if (makeErrorSubmit) {
-      setTimeout(() => {
-        setMakeErrorSubmit(false)
-      }, 2500);
-    }
-  }, [makeCorrectSubmit, makeErrorSubmit])
+  // const correctSubmit = (e) => {
+  //   setMakeCorrectSubmit(e)
+  // }
+  // const errorSubmit = (e) => {
+  //   setMakeErrorSubmit(e)
+  // }
+  // useEffect(() => {
+  //   if (makeCorrectSubmit) {
+  //     setTimeout(() => {
+  //       setMakeCorrectSubmit(false)
+  //     }, 2500);
+  //   }
+  //   if (makeErrorSubmit) {
+  //     setTimeout(() => {
+  //       setMakeErrorSubmit(false)
+  //     }, 2500);
+  //   }
+  // }, [makeCorrectSubmit, makeErrorSubmit])
 
+  // submit offer
+  const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+  });
+  const [openCorrect, setOpenCorrect] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const handleClick = (e) => {
+    switch (e) {
+      case true:
+        setOpenCorrect(true)
+        break;
+      case false:
+        setOpenError(true)
+        break;
+    }
+
+  };
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenCorrect(false);
+    setOpenError(false)
+  };
+  const [SnackbarShow, setSnackbarShow] = useState({
+    vertical: 'top',
+    horizontal: 'center',
+  })
+  const { vertical, horizontal } = SnackbarShow;
+  function GrowTransition(props) {
+    return <Grow {...props} />;
+  }
   return (
     <Box position='relative' overflow='hidden'>
       <Header isloging={false} profile={token ? true : false} UserInfos={UserInfos} updateContext={updateContext} />
@@ -102,7 +143,7 @@ function Home({ handleOffer, updateContext }) {
                 )
               }}
             />
-            <Button variant='contained' size='medium' onClick={() => { navigate(`/Jobs?${searchJob && `keywords=${searchJob}&`}${searchPlace && `cityLoc=${searchPlace}&`}${TypeOfJob && `typeOfJob=${TypeOfJob}`}`) }} sx={{ bgcolor: 'primary.A200', '&:hover': { bgcolor: 'primary.A100' }, color: 'primary.main', borderRadius: '60px', letterSpacing: '1.5px', fontWeight: 'bold' }}>
+            <Button variant='contained' size='medium' onClick={() => { navigate(`/Jobs?${searchJob && `keywords=${searchJob.trim()}&`}${searchPlace && `cityLoc=${searchPlace}&`}${TypeOfJob && `typeOfJob=${TypeOfJob}`}`); searchJob.trim() !== '' && localStorage.setItem('SearchKeywords', JSON.stringify(Array.from(new Set([...SearchKeys, searchJob.trim()])))) }} sx={{ bgcolor: 'primary.A200', '&:hover': { bgcolor: 'primary.A100' }, color: 'primary.main', borderRadius: '60px', letterSpacing: '1.5px', fontWeight: 'bold' }}>
               Search
             </Button>
           </Box>
@@ -227,15 +268,30 @@ function Home({ handleOffer, updateContext }) {
         </Button>
       </Box>
       {
-        makeOffer && <Offer offering={offering} correctSubmit={correctSubmit} errorSubmit={errorSubmit} />
+        makeOffer && <Offer offering={offering} handleClick={handleClick} />
       }
-      {/* <Footer /> */}
-      <Box sx={{ position: 'absolute', padding: '0 5px', height: '50px', p: 1, bgcolor: 'rgb(244, 244, 244)', border: 'solid 1.7px rgb(5, 182, 32)', borderRadius: '8px', left: '50%', transform: 'translate(-50%)', top: makeCorrectSubmit ? '40px' : '-100px', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 1.5s ease' }}>
+
+      <Snackbar
+        anchorOrigin={{ vertical, horizontal }}
+        open={openCorrect || openError}
+        transitionDuration={1000}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        TransitionComponent={GrowTransition}
+        key={vertical + horizontal}
+      >
+        <Alert onClose={handleClose} severity={openCorrect ? 'success' : 'error'} sx={{ width: '100%' }}>
+          {openCorrect && 'OFFER ADDED SUCCESSFULY !'}
+          {openError && 'OFFER NOT ADDED !'}
+        </Alert>
+      </Snackbar>
+
+      {/* <Box sx={{ position: 'absolute', padding: '0 5px', height: '50px', p: 1, bgcolor: 'rgb(244, 244, 244)', border: 'solid 1.7px rgb(5, 182, 32)', borderRadius: '8px', left: '50%', transform: 'translate(-50%)', top: makeCorrectSubmit ? '40px' : '-100px', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 1.5s ease' }}>
         <Typography variant='body1' color='rgb(5, 182, 32)' fontWeight='bolder'>OFFER ADDED SUCCESSFULY</Typography>
       </Box>
       <Box sx={{ position: 'absolute', padding: '0 7px', height: '50px', p: 1, bgcolor: 'rgb(244, 244, 244)', border: 'solid 1.7px red', borderRadius: '8px', left: '50%', transform: 'translate(-50%)', top: makeErrorSubmit ? '40px' : '-100px', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 1.5s ease' }}>
         <Typography variant='body1' color='red' fontWeight='bolder' letterSpacing='2.5px'>OFFER NOT ADDED</Typography>
-      </Box>
+      </Box> */}
 
 
     </Box >
