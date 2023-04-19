@@ -45,7 +45,7 @@ function ChooseSignUp() {
                         <Box sx={boxSX} onClick={() => { setChooseCompany(true); setChooseEmployer(false) }} style={{ backgroundColor: chooseCompany ? '#144272' : null, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 5px', border: '1px solid grey', justifyContent: 'space-evenly', width:isMatchedPhone?'75%':(isMatchedTablette?'45%':'35%'),marginBottom:isMatchedPhone?'20px':0, height: '170px', borderRadius: '8px', cursor: 'pointer' }} >
                             <BusinessOutlinedIcon sx={{ fontSize: '2em', color: chooseCompany ? 'white' : 'primary.main' }} />
                             <Typography variant='h6' color={chooseCompany ? 'whitesmoke' : 'secondary'} >
-                                I'm a company looking for a peaple
+                                I'm a company looking for a people
                             </Typography>
 
                         </Box>

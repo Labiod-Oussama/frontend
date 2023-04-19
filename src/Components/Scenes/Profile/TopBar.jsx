@@ -50,7 +50,7 @@ function TopBar() {
                     }}
                 />
                 <Box display='flex' alignItems='center' color='primary.main'>
-                    <Badge color="primary" badgeContent={0} showZero sx={{mr:3,cursor:'pointer'}}>
+                    <Badge color="primary" badgeContent={0} showZero sx={{ mr: 3, cursor: 'pointer' }}>
                         <NotificationsIcon />
                     </Badge>
                     {/* {
@@ -102,7 +102,7 @@ function TopBar() {
                         onClick={handleClick}
                         endIcon={!downProfile ? <KeyboardArrowDownIcon sx={{ transform: 'scale(1.3)' }} /> : <KeyboardArrowUpIcon sx={{ transform: 'scale(1.3)' }} />}
                     >
-                        <img src={user} alt="profile_name" width='50px' style={{ borderRadius: '18px' }} />
+                        <Avatar src={user} alt='profile_name' variant="rounded" sx={{ width: '46px', height: '46px',cursor: 'pointer' }} />
                     </Button>
                     <Menu
                         anchorEl={anchorEl}

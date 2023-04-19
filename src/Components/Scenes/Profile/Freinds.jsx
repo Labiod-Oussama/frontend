@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 function Freinds() {
   const [freinds,setFriends]=useState([]);
   return (
-    <Box flex={0.8} sx={{p:'5px 20px',borderRadius:'10px',border:'solid 1.5px grey'}}>
+    <Box flex={0.8} sx={{height:100,p:'5px 20px',borderRadius:'10px',border:'solid 1.5px grey'}}>
       <Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
         <Typography variant='h5' color='primary'>
           Friends

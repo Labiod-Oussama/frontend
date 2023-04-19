@@ -1,18 +1,16 @@
-import { Box } from '@mui/material'
+import { Box, useMediaQuery, useTheme } from '@mui/material'
 import { red } from '@mui/material/colors'
 import React from 'react'
 import Shimer from './Shimer'
 import Sketlon from './Sketlon'
 function SketlonElement() {
-  // const BoxSx={
-  //   "&:hover":{
-  //     backgroundColor:'red'
-  //   }
-  // }
+  const theme = useTheme()
+  const isMatchedTablette = useMediaQuery(theme.breakpoints.down('md'))
+  const isMatchedPhone = useMediaQuery(theme.breakpoints.down('sm'))
   return (
-    <Box display='flex' flexDirection='column' sx={{position:'relative',overflow:'hidden',mb:5}}>
+    <Box display='flex' flexDirection='column' sx={{ position: 'relative', overflow: 'hidden', mb: isMatchedPhone ? 3 : 5, mr: isMatchedPhone && 1, ml: isMatchedPhone && 1 }}>
       <Sketlon type='position' />
-      <Box display='flex' justifyContent='space-between' > 
+      <Box display='flex' justifyContent='space-between' >
         <Sketlon type='thumbnail' />
         <Box sx={{ width: '100%' }}>
           <Sketlon type='place' />
@@ -21,7 +19,7 @@ function SketlonElement() {
           <Sketlon type='Description' />
         </Box>
       </Box>
-    <Shimer />
+      <Shimer />
     </Box>
   )
 }

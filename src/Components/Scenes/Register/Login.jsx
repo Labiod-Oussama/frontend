@@ -95,7 +95,7 @@ function Login({ updateContext }) {
                     <Button type='submit' variant='contained' color='primary' sx={{ borderRadius: '60px', width: '180px', mb: 3 }} form='my-login' >
                         Connexion
                     </Button>
-                    <Link underline='none' color='secondary' variant='body1' sx={{ cursor: 'pointer', m: '0 auto' }}>
+                    <Link underline='none' color='secondary' variant='body1' onClick={()=>navigate('/chooseToBe')} sx={{ cursor: 'pointer', m: '0 auto' }}>
                         Pas encore membre de Rendili ? Inscrivez-vous gratuitement
                     </Link>
                 </Box>

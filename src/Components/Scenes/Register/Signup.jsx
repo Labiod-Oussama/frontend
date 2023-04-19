@@ -16,6 +16,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { InfoGlobal } from '../../../App'
 import { serverAddress } from '../../Global/Config'
+import { gapi } from "gapi-script";
 function Signup({ updateContext }) {
     const Infos = useContext(InfoGlobal)
     const [chosen, setChosen] = useState(() => {
@@ -86,7 +87,7 @@ function Signup({ updateContext }) {
     const [email, setEmail] = useState(null);
     const navigate = useNavigate()
     const responseFacebook = async (response) => {
-        console.log(response);
+        // console.log(response);
         localStorage.setItem('token', JSON.stringify(response.accessToken))
         // const respons = await fetch(`https://graph.facebook.com/${response.userID}?fields=id,name,email,picture&access_token=${response.accessToken}`);
         // const data = await respons.json();
@@ -102,7 +103,11 @@ function Signup({ updateContext }) {
     const responseGoogle = (response) => {
         console.log(response);
     };
-
+    useEffect(() => {
+        gapi.load("auth2", () => {
+          gapi.auth2.init({ clientId:'680157492797-7l7kif0cuvflg6m3u2kno4a24n776b11.apps.googleusercontent.com'});
+        });
+      }, []);
     return (
         <Box >
             <Header isloging={false} />
@@ -123,6 +128,7 @@ function Signup({ updateContext }) {
                                     username: values.Name,
                                     password: values.Password,
                                     email: values.Email,
+                                    city:values.City,
                                     companyCondition: chosen == 'chosenCompany' ? true : false
                                 })
                             }).then(res => res.json())
@@ -237,7 +243,7 @@ function Signup({ updateContext }) {
                         chosen != 'chosenCompany' ? <Box width={isMatchedTablette ? '100%' : '70%'} textAlign='center' >
                             <Box display='flex' alignItems='center' mb={3}>
                                 <hr style={{ height: 0, borderColor: 'rgb(81, 80, 80)', flex: 1 }} />
-                                <Typography variant='h6' color='whitesmoke' m='0 5px' display='inline-block' textAlign='center'>OR</Typography>
+                                <Typography variant='h6' color='primary' m='0 5px' display='inline-block' textAlign='center'>OR</Typography>
                                 <hr style={{ flex: 1, height: 0, borderColor: 'rgb(81, 80, 80)' }} />
                             </Box>
 
@@ -255,7 +261,7 @@ function Signup({ updateContext }) {
                                 )}
                             />
                             <GoogleLogin
-                                clientId="378672419142-63so1bfi4dhfob95e00anj40s9t74jn3.apps.googleusercontent.com"
+                                clientId="680157492797-7l7kif0cuvflg6m3u2kno4a24n776b11.apps.googleusercontent.com"
                                 buttonText='login with google'
                                 // render={(renderProps) => (
                                 //     <Button
@@ -275,7 +281,6 @@ function Signup({ updateContext }) {
                                 onSuccess={responseGoogle}
                                 onFailure={responseGoogle}
                                 cookiePolicy={"single_host_origin"}
-
                             />
                         </Box>
                             : <img src={signup} alt="signup" width='100%' />

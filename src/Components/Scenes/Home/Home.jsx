@@ -2,12 +2,12 @@ import { Alert, Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup,
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AOS from 'aos'
+import Lottie from 'react-lottie';
 import 'aos/dist/aos.css'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import FmdGoodOutlinedIcon from '@mui/icons-material/FmdGoodOutlined';
 import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
 import AddToDriveOutlinedIcon from '@mui/icons-material/AddToDriveOutlined';
-import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 import header from '../../Assets/header.png'
 import analyse from '../../Assets/analyse.png'
 import work from '../../Assets/work.png'
@@ -18,8 +18,9 @@ import Footer from '../../Global/Footer'
 import Offer from '../Offer/Offer'
 import { InfoGlobal } from '../../../App'
 import MuiAlert from '@mui/material/Alert';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 
-function Home({ handleOffer, updateContext }) {
+function Home({updateContext }) {
   const { token, UserInfos } = useContext(InfoGlobal)
   const theme = useTheme()
   const navigate = useNavigate()
@@ -44,32 +45,19 @@ function Home({ handleOffer, updateContext }) {
     const words = localStorage.getItem('SearchKeywords');
     return JSON.parse(words) || []
   })
-
-
+  //offer
   const offering = (e) => {
     setMakeOffer(e)
-    handleOffer(e)
-    // setMakeCorrectSubmit(false)
+   }
+  useEffect(() => {
+    if (makeOffer) {
+      document.body.style.overflow = 'hidden';
+      document.body.scrollIntoView({ behavior: 'smooth' })
   }
-  // const correctSubmit = (e) => {
-  //   setMakeCorrectSubmit(e)
-  // }
-  // const errorSubmit = (e) => {
-  //   setMakeErrorSubmit(e)
-  // }
-  // useEffect(() => {
-  //   if (makeCorrectSubmit) {
-  //     setTimeout(() => {
-  //       setMakeCorrectSubmit(false)
-  //     }, 2500);
-  //   }
-  //   if (makeErrorSubmit) {
-  //     setTimeout(() => {
-  //       setMakeErrorSubmit(false)
-  //     }, 2500);
-  //   }
-  // }, [makeCorrectSubmit, makeErrorSubmit])
-
+  else {
+      document.body.style.overflow = 'auto';
+  }
+  },[makeOffer])
   // submit offer
   const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -147,7 +135,7 @@ function Home({ handleOffer, updateContext }) {
               Search
             </Button>
           </Box>
-          <FormGroup sx={{ display: "flex", flexWrap: 'wrap', flexDirection: 'row', mb: 10 }}>
+          <FormGroup sx={{ display: "flex", flexWrap: 'wrap', flexDirection: 'row', mb: isMatchedPhone?6:10 }}>
             {
               TimeCheckbox.map((ele, index) => (
                 <FormControlLabel key={index} control={<Checkbox />} label={ele} onClick={() => setTypeOfJob(ele)} sx={{ mr: 5 }}></FormControlLabel>
@@ -155,14 +143,10 @@ function Home({ handleOffer, updateContext }) {
             }
           </FormGroup>
           {
-            companyCondition &&
-            <Button variant='contained' size='large' startIcon={<AddCircleOutlinedIcon />} sx={{ bgcolor: 'primary.main', '&:hover': { bgcolor: 'primary.main' }, width: isMatchedPhone ? '170px' : '190px', height: isMatchedPhone ? '40px' : '50px', mb: isMatchedPhone ? 3 : 5, borderRadius: '60px', fontWeight: 'bolder', letterSpacing: isMatchedPhone ? '1px' : '3px' }}
-              onClick={() => { setMakeOffer(true); handleOffer(true) }}
-            >
-              Add offer
-            </Button>
+            companyCondition && <Offer handleClick={handleClick}/>
+           
           }
-
+          
 
           {/* <Box>
                   <FormControl sx={{ minWidth: 200, mr: searchChoose ? 2 : 0 }}>
@@ -206,7 +190,7 @@ function Home({ handleOffer, updateContext }) {
                   Register for free !
 
                 </Button>
-                <Button color='secondary' variant='outlined' sx={{ width: isMatchedPhone ? '80%' : null, borderRadius: '60px', fontWeight: 'bolder' }} size='large' startIcon={<AddToDriveOutlinedIcon sx={{ color: 'primary.main' }} />}>
+                <Button color='secondary' variant='outlined' sx={{ width: isMatchedPhone ? '80%' : null, borderRadius: '60px', fontWeight: 'bolder' }} size='large' startIcon={<PersonAddAlt1Icon sx={{ color: 'primary.main' }} />}>
                   Sign Up
                 </Button>
               </Box>
@@ -267,10 +251,9 @@ function Home({ handleOffer, updateContext }) {
           Join us for free !
         </Button>
       </Box>
-      {
+      {/* {
         makeOffer && <Offer offering={offering} handleClick={handleClick} />
-      }
-
+      } */}
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={openCorrect || openError}

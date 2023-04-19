@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { InfoGlobal } from '../../../App'
 import { grey } from '@mui/material/colors'
 import CloseIcon from '@mui/icons-material/Close';
+import { serverAddress } from '../../Global/Config'
 function PostComponent({ handlePost }) {
     const { token, UserInfos } = useContext(InfoGlobal)
     const [ThePost,setThePost]=useState('')
@@ -16,6 +17,15 @@ function PostComponent({ handlePost }) {
         setDoPosting(false)
        }
     },[ThePost])
+    const Posting=()=>{
+        fetch(`${serverAddress}/post`,{
+            method:'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body:JSON.stringify({
+                post:ThePost
+            })
+        })
+    }
     const theme = useTheme()
     const isMatchedTablette = useMediaQuery(theme.breakpoints.down('md'))
     const isMatchedPhone = useMediaQuery(theme.breakpoints.down('sm'))
@@ -39,7 +49,7 @@ function PostComponent({ handlePost }) {
                 />
 
                </Box>
-                <Button variant='contained' disabled={!doPosting} sx={{width:'100%', bgcolor: 'primary.light', '&:hover': { bgcolor: 'primary.light' } , mt: 2, mb: 2, fontWeight: 'bolder', letterSpacing: '2px'}}>
+                <Button variant='contained' onClick={Posting} disabled={!doPosting} sx={{width:'100%', bgcolor: 'primary.light', '&:hover': { bgcolor: 'primary.light' } , mt: 2, mb: 2, fontWeight: 'bolder', letterSpacing: '2px'}}>
                     POST
                 </Button>
             </Box>
